@@ -6,7 +6,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -45,7 +44,6 @@ public class SimpleCalendarTester {
 		days.add(new JLabel("T", JLabel.CENTER));
 		days.add(new JLabel("F", JLabel.CENTER));
 		days.add(new JLabel("S", JLabel.CENTER));
-		JLabel emptyLabel = new JLabel();
 		monthPanel.setLayout(new GridLayout(7, 7));
 		for(JLabel label : days) {
 			monthPanel.add(label);
