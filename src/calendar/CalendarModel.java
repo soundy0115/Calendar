@@ -23,7 +23,10 @@ public class CalendarModel {
 	}
 	
 	/**
-	 * Mutator: Create Event
+	 * Mutator
+	 * : Create Event and notify to the ChangeListeners
+	 * 
+	 * @param	event	the event that will be added into the calendar.
 	 */
 	public void newEvent(Event event) {
 		calendar.add(event);
@@ -34,8 +37,12 @@ public class CalendarModel {
 	}
 	
 	/**
-	 * Mutator: Move D-Day
-	 * @param day
+	 * Mutator
+	 * : Move D-Day and notify to the ChangeListeners
+	 * 
+	 * @param	day		if it is 1, it will plus 1 day to the dday,
+	 * 					if it is -1, it will minus 1 day to the dday.
+	 * 					only 1 or -1 can be entered.
 	 */
 	public void moveDDay(int day) {
 		if(day == 1) {
@@ -51,6 +58,12 @@ public class CalendarModel {
 		}
 	}
 	
+	/**
+	 * Mutator
+	 * : Set the D-Day and notify to the ChangeListeners
+	 * 
+	 * @param	date	D-Day will be set to the date(LocalDate type)
+	 */
 	public void setDDay(LocalDate date) {
 		dDay = date;
 		
@@ -59,8 +72,11 @@ public class CalendarModel {
 			l.stateChanged(e);
 		}
 	}
+	
 	/**
 	 * Accessor: get all Events
+	 * 
+	 * @return	return all events in the calendar in treeset.
 	 */
 	public TreeSet<Event> getAllEvents() {
 		return calendar.getEvents();
@@ -76,6 +92,8 @@ public class CalendarModel {
 	
 	/**
 	 * Accessor: get D-Day's events
+	 * 
+	 * @return	return all events that occurs in D-Day in treeset structure.
 	 */
 	public ArrayList<Event> getDDayEvents(LocalDate dDay){
 		ArrayList<Event> dDayEvents = new ArrayList<Event>();
@@ -87,11 +105,12 @@ public class CalendarModel {
 		return dDayEvents;
 	}
 	
-
-	
-	
 	/**
 	 * Attach: attach listeners to the model
+	 * 
+	 * @param	listener	ChangeListener from the view.
+	 * 						it will be stored in the data structure(listeners),
+	 * 						and be notified when there is any change in the model.
 	 */
 	public void addChangeListener(ChangeListener listener) {
 		listeners.add(listener);

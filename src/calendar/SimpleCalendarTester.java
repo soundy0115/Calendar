@@ -29,7 +29,31 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+/**
+ * Simple Calendar Application
+ * 
+ * The Calendar application that displays month view and day view.
+ * User can create the event, move the day. Current will be highlighted by the gray color.
+ * This program also detects error when the user try to create an event that conflicts with the existing events.
+ * 
+ * @version 22.11.30
+ * @author Juhan Lee
+ * 
+ *
+ */
+
+
 public class SimpleCalendarTester {
+	
+	/**
+	 * The Main method of the calendar which contains container and view in it.
+	 * Most of the part is view, except the JButtons and JTextField.
+	 * The Controller of the application (JButtons and JTextField),
+	 * user can move current day and create events.
+	 * 
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws IOException {
 		
 		CalendarModel model = new CalendarModel();
@@ -131,7 +155,6 @@ public class SimpleCalendarTester {
 				try {
 					model.getCalendar().writeFile();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				System.exit(0);
@@ -186,7 +209,6 @@ public class SimpleCalendarTester {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				// String split
 				String name = eventName.getText();
 				String startTime[] = eventStartTime.getText().split(":");
@@ -239,17 +261,10 @@ public class SimpleCalendarTester {
 		});
 		createLowerPanel.add(saveBtn);
 		
-		
 		createMainPanel.add(createLowerPanel);
 		createFrame.add(createMainPanel);
 		createFrame.pack();
 		createFrame.setVisible(false);
-		
-		
-		
-		
-		
-		
 
 		
 		// Full View Create Button
@@ -266,7 +281,6 @@ public class SimpleCalendarTester {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				createFrame.setVisible(true);
 			}
 			
@@ -297,7 +311,6 @@ public class SimpleCalendarTester {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				// TODO Auto-generated method stub
 				String dayInfo = dDays[0].getDayOfWeek().toString() + " " + dDays[0].getMonthValue() + "/" + dDays[0].getDayOfMonth();
 				dayInfoLabel.setText(dayInfo);
 			}
@@ -325,7 +338,6 @@ public class SimpleCalendarTester {
 		model.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				// TODO Auto-generated method stub
 				monthLabel.setText(dDays[0].getMonth().toString() + " " + dDays[0].getYear());
 				
 			}
@@ -453,7 +465,6 @@ public class SimpleCalendarTester {
 			model.addChangeListener(new ChangeListener(){
 				@Override
 				public void stateChanged(ChangeEvent e) {
-					// TODO Auto-generated method stub
 					
 					final LocalDate[] dDays = {model.getDDay()};
 					LocalDate firstDay = dDays[0].minusDays(dDays[0].getDayOfMonth()).plusDays(1); // 11-01
@@ -555,7 +566,6 @@ public class SimpleCalendarTester {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
 					final LocalDate[] dDays = {model.getDDay()};
 					if(btn42[j].getText() != "") {
 						LocalDate setDay = LocalDate.of(dDays[0].getYear(), dDays[0].getMonth(), Integer.parseInt(btn42[j].getText()));
@@ -593,7 +603,7 @@ public class SimpleCalendarTester {
 		JTextArea dayViewText = new JTextArea(20, 40);
 		dayViewText.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		dayViewText.setBackground(Color.WHITE);
-		dayViewText.setFont(new Font("Verdana", Font.BOLD, 12));
+		dayViewText.setFont(new Font("Verdana", Font.BOLD, 18));
 		
 		String dayEventStr = "";		
 		for(Event event : model.getDDayEvents(dDays[0])) {
@@ -605,7 +615,6 @@ public class SimpleCalendarTester {
 		model.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				// TODO Auto-generated method stub
 				String dayEventStr = "";
 				final LocalDate[] dDays = {model.getDDay()};
 				
@@ -631,9 +640,6 @@ public class SimpleCalendarTester {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		
-		
-		
-
 	}
 
 }
