@@ -286,4 +286,12 @@ public class Event implements Comparable<Event>{
 			}
 		}
 	}
+	
+	public String toString() {
+		String start = this.ti.getStartTime().toString();
+		String end = this.ti.getEndTime().toString();
+		String name = this.name;
+		return start + " ~ " + end + "   " + name;
+		
+	}
 }

@@ -40,12 +40,9 @@ public class CalendarModel {
 	public void moveDDay(int day) {
 		if(day == 1) {
 			dDay = dDay.plusDays(1);
-			System.out.println(dDay);
 		} else if(day == -1) {
 			dDay = dDay.minusDays(1);
-			System.out.println(dDay);
 		} else {
-			System.out.println("Error: should be +1 or -1");
 		}
 		
 		ChangeEvent e = new ChangeEvent(this);
@@ -54,7 +51,14 @@ public class CalendarModel {
 		}
 	}
 	
-	
+	public void setDDay(LocalDate date) {
+		dDay = date;
+		
+		ChangeEvent e = new ChangeEvent(this);
+		for(ChangeListener l : listeners) {
+			l.stateChanged(e);
+		}
+	}
 	/**
 	 * Accessor: get all Events
 	 */
@@ -76,7 +80,7 @@ public class CalendarModel {
 	public ArrayList<Event> getDDayEvents(LocalDate dDay){
 		ArrayList<Event> dDayEvents = new ArrayList<Event>();
 		for(Event e : calendar.getEvents()) {
-			if(e.getDate().equals(dDay)) {
+			if(e.isOccurring(dDay)) {
 				dDayEvents.add(e);
 			}
 		}

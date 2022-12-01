@@ -21,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
@@ -36,19 +37,21 @@ public class SimpleCalendarTester {
 		
 		// D-Day setup
 		final LocalDate[] dDays = {model.getDDay()};
+		LocalDate firstDay = dDays[0].minusDays(dDays[0].getDayOfMonth()).plusDays(1); // 11-01
+		DayOfWeek firstDayOfWeek = firstDay.getDayOfWeek(); // SUN.MON.TUE
+		int monthDays = dDays[0].lengthOfMonth(); // 28, 29, 30, 31
 		
 		model.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				// TODO Auto-generated method stub
 				dDays[0] = model.getDDay();
+
 			}
 			
 		});
 		
-		LocalDate firstDay = dDays[0].minusDays(dDays[0].getDayOfMonth()).plusDays(1); // 11-01
-		DayOfWeek firstDayOfWeek = firstDay.getDayOfWeek(); // SUN.MON.TUE
-		int monthDays = dDays[0].lengthOfMonth(); // 28, 29, 30, 31
+
 
 		
 		// Main Frame GridBagLayout
@@ -59,16 +62,7 @@ public class SimpleCalendarTester {
 		frame.setLayout(gridBag);
 		GridBagConstraints con = new GridBagConstraints();
 		
-		model.addChangeListener(new ChangeListener() {
 
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				// TODO Auto-generated method stub
-				frame.repaint();
-				System.out.println("Repainted");
-			}
-			
-		});
 
 
 		// Move Buttons
@@ -136,6 +130,21 @@ public class SimpleCalendarTester {
 		quitBtn.setBackground(Color.RED);
 		quitBtn.setForeground(Color.WHITE);
 		quitBtn.setBorderPainted(false);
+		quitBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				try {
+					model.getCalendar().writeFile();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				System.exit(0);
+			}
+			
+		});
 		emptyPanel6.add(quitBtn);
 		
 		emptyPanel6.setBackground(Color.WHITE);
@@ -247,6 +256,7 @@ public class SimpleCalendarTester {
 		frame.add(emptyPanel3, con);
 		
 		// Empty Panel
+		/*
 		JPanel emptyPanel4 = new JPanel();
 		emptyPanel4.setBackground(Color.WHITE);
 		emptyPanel4.add(new JLabel(" "));
@@ -255,20 +265,32 @@ public class SimpleCalendarTester {
 		con.gridx = 2;
 		con.gridy = 2;
 		frame.add(emptyPanel4, con);
+		*/
 		
 		// Day info
 		JPanel dayInfoPanel = new JPanel();
 		dayInfoPanel.setBackground(Color.WHITE);
 		String dayInfo = dDays[0].getDayOfWeek().toString() + " " + dDays[0].getMonthValue() + "/" + dDays[0].getDayOfMonth();
 		JLabel dayInfoLabel = new JLabel(dayInfo);
+		model.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				// TODO Auto-generated method stub
+				String dayInfo = dDays[0].getDayOfWeek().toString() + " " + dDays[0].getMonthValue() + "/" + dDays[0].getDayOfMonth();
+				dayInfoLabel.setText(dayInfo);
+			}
+			
+		});
 		dayInfoPanel.add(dayInfoLabel);
 		con.fill = GridBagConstraints.HORIZONTAL;
 		con.weightx = 0.5;
-		con.gridx = 3;
+		con.gridx = 2;
+		con.gridwidth = 2;
 		con.gridy = 2;		
 		frame.add(dayInfoPanel, con);
 		
-		
+		con.gridwidth = 1;
 		
 		// Month View Main
 		JPanel monthPanel = new JPanel();
@@ -309,266 +331,224 @@ public class SimpleCalendarTester {
 		for(JLabel label : days) {
 			monthBody.add(label);
 		}
-		
+
 
 		
-		if(firstDayOfWeek.equals(DayOfWeek.SUNDAY)) {
-			int full42 = 42;
-			for(int i = 0; i < 0; i++) {
+		int[] days42 = new int[42];
+		JButton[] btn42 = new JButton[42];
+		for(int i = 0; i < days42.length; i++) {
+			final int j = i;
+			btn42[i] = new JButton();
+			btn42[i].setBackground(Color.WHITE);
+			if(firstDayOfWeek.equals(DayOfWeek.SUNDAY)) {
+				if((j + 1) > 0 && (j + 1) <= monthDays) {
+					if((j + 1) == dDays[0].getDayOfMonth()) {
+						btn42[j].setBackground(Color.GRAY);
+					} else {
+						btn42[j].setBackground(Color.WHITE);
+					}
+					btn42[j].setText(Integer.toString(j + 1));
+				} else {
+					btn42[j].setBackground(Color.WHITE);
+					btn42[j].setText("");
+				}
+			} else if(firstDayOfWeek.equals(DayOfWeek.MONDAY)) {
+				if(j > 0 && j <= monthDays) {
+					if(j == dDays[0].getDayOfMonth()) {
+						btn42[j].setBackground(Color.GRAY);
+					} else {
+						btn42[j].setBackground(Color.WHITE);
+					}
+					btn42[j].setText(Integer.toString(j));
+				} else {
+					btn42[j].setBackground(Color.WHITE);
+					btn42[j].setText("");
+				}
+			} else if(firstDayOfWeek.equals(DayOfWeek.TUESDAY)) {
+				if((j - 1) > 0 && (j - 1) <= monthDays) {
+					if((j - 1) == dDays[0].getDayOfMonth()) {
+						btn42[j].setBackground(Color.GRAY);
+					} else {
+						btn42[j].setBackground(Color.WHITE);
+					}
+					btn42[j].setText(Integer.toString(j - 1));
+				} else {
+					btn42[j].setBackground(Color.WHITE);
+					btn42[j].setText("");
+				}
 
-				monthBody.add(new JLabel());
-				full42--;
-			}
-			for(int i = 1; i <= monthDays; i++) {
-				//JButton emptyButton = new JButton();				
-				String dayNumber = Integer.toString(i);
-				JButton newBtn = new JButton(dayNumber);
-				final Integer innerI = i;
-				if(innerI == dDays[0].getDayOfMonth()) {
-					// TODO Auto-generated method stub
-					newBtn.setBackground(Color.GRAY);
+			} else if(firstDayOfWeek.equals(DayOfWeek.WEDNESDAY)) {
+				if((j - 2) > 0 && (j - 2) <= monthDays) {
+					if((j - 2) == dDays[0].getDayOfMonth()) {
+						btn42[j].setBackground(Color.GRAY);
+					} else {
+						btn42[j].setBackground(Color.WHITE);
+					}
+					btn42[j].setText(Integer.toString(j - 2));
 				} else {
-					newBtn.setBackground(Color.WHITE);					
+					btn42[j].setBackground(Color.WHITE);
+					btn42[j].setText("");
 				}
-				model.addChangeListener(new ChangeListener() {
-					@Override
-					public void stateChanged(ChangeEvent e) {
-						// TODO Auto-generated method stub
-						if(innerI == dDays[0].getDayOfMonth()) {
-							// TODO Auto-generated method stub
-							newBtn.setBackground(Color.GRAY);
-						} else {
-							newBtn.setBackground(Color.WHITE);					
-						}
-					}					
-				});
-				monthBody.add(newBtn);
-				full42--;
+
+			} else if(firstDayOfWeek.equals(DayOfWeek.THURSDAY)) {
+				if((j - 3) > 0 && (j - 3) <= monthDays) {
+					if((j - 3) == dDays[0].getDayOfMonth()) {
+						btn42[j].setBackground(Color.GRAY);
+					} else {
+						btn42[j].setBackground(Color.WHITE);
+					}
+					btn42[j].setText(Integer.toString(j - 3));
+				} else {
+					btn42[j].setBackground(Color.WHITE);
+					btn42[j].setText("");
+				}
+
+			} else if(firstDayOfWeek.equals(DayOfWeek.FRIDAY)) {
+				if((j - 4) > 0 && (j - 4) <= monthDays) {
+					if((j - 4) == dDays[0].getDayOfMonth()) {
+						btn42[j].setBackground(Color.GRAY);
+					} else {
+						btn42[j].setBackground(Color.WHITE);
+					}
+					btn42[j].setText(Integer.toString(j - 4));
+				} else {
+					btn42[j].setBackground(Color.WHITE);
+					btn42[j].setText("");
+				}
+
+			} else {
+				if((j - 5) > 0 && (j - 5) <= monthDays) {
+					if((j - 5) == dDays[0].getDayOfMonth()) {
+						btn42[j].setBackground(Color.GRAY);
+					} else {
+						btn42[j].setBackground(Color.WHITE);
+					}
+					btn42[j].setText(Integer.toString(j - 5));
+				} else {
+					btn42[j].setBackground(Color.WHITE);
+					btn42[j].setText("");
+				}
 			}
+			model.addChangeListener(new ChangeListener(){
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					// TODO Auto-generated method stub
+					
+					final LocalDate[] dDays = {model.getDDay()};
+					LocalDate firstDay = dDays[0].minusDays(dDays[0].getDayOfMonth()).plusDays(1); // 11-01
+					DayOfWeek firstDayOfWeek = firstDay.getDayOfWeek(); // SUN.MON.TUE
+					int monthDays = dDays[0].lengthOfMonth(); // 28, 29, 30, 31
+					if(firstDayOfWeek.equals(DayOfWeek.SUNDAY)) {
+						if((j + 1) > 0 && (j + 1) <= monthDays) {
+							if((j + 1) == dDays[0].getDayOfMonth()) {
+								btn42[j].setBackground(Color.GRAY);
+							} else {
+								btn42[j].setBackground(Color.WHITE);
+							}
+							btn42[j].setText(Integer.toString(j + 1));
+						} else {
+							btn42[j].setBackground(Color.WHITE);
+							btn42[j].setText("");
+						}
+					} else if(firstDayOfWeek.equals(DayOfWeek.MONDAY)) {
+						if(j > 0 && j <= monthDays) {
+							if(j == dDays[0].getDayOfMonth()) {
+								btn42[j].setBackground(Color.GRAY);
+							} else {
+								btn42[j].setBackground(Color.WHITE);
+							}
+							btn42[j].setText(Integer.toString(j));
+						} else {
+							btn42[j].setBackground(Color.WHITE);
+							btn42[j].setText("");
+						}
+					} else if(firstDayOfWeek.equals(DayOfWeek.TUESDAY)) {
+						if((j - 1) > 0 && (j - 1) <= monthDays) {
+							if((j - 1) == dDays[0].getDayOfMonth()) {
+								btn42[j].setBackground(Color.GRAY);
+							} else {
+								btn42[j].setBackground(Color.WHITE);
+							}
+							btn42[j].setText(Integer.toString(j - 1));
+						} else {
+							btn42[j].setBackground(Color.WHITE);
+							btn42[j].setText("");
+						}
+
+					} else if(firstDayOfWeek.equals(DayOfWeek.WEDNESDAY)) {
+						if((j - 2) > 0 && (j - 2) <= monthDays) {
+							if((j - 2) == dDays[0].getDayOfMonth()) {
+								btn42[j].setBackground(Color.GRAY);
+							} else {
+								btn42[j].setBackground(Color.WHITE);
+							}
+							btn42[j].setText(Integer.toString(j - 2));
+						} else {
+							btn42[j].setBackground(Color.WHITE);
+							btn42[j].setText("");
+						}
+
+					} else if(firstDayOfWeek.equals(DayOfWeek.THURSDAY)) {
+						if((j - 3) > 0 && (j - 3) <= monthDays) {
+							if((j - 3) == dDays[0].getDayOfMonth()) {
+								btn42[j].setBackground(Color.GRAY);
+							} else {
+								btn42[j].setBackground(Color.WHITE);
+							}
+							btn42[j].setText(Integer.toString(j - 3));
+						} else {
+							btn42[j].setBackground(Color.WHITE);
+							btn42[j].setText("");
+						}
+
+					} else if(firstDayOfWeek.equals(DayOfWeek.FRIDAY)) {
+						if((j - 4) > 0 && (j - 4) <= monthDays) {
+							if((j - 4) == dDays[0].getDayOfMonth()) {
+								btn42[j].setBackground(Color.GRAY);
+							} else {
+								btn42[j].setBackground(Color.WHITE);
+							}
+							btn42[j].setText(Integer.toString(j - 4));
+						} else {
+							btn42[j].setBackground(Color.WHITE);
+							btn42[j].setText("");
+						}
+
+					} else {
+						if((j - 5) > 0 && (j - 5) <= monthDays) {
+							if((j - 5) == dDays[0].getDayOfMonth()) {
+								btn42[j].setBackground(Color.GRAY);
+							} else {
+								btn42[j].setBackground(Color.WHITE);
+							}
+							btn42[j].setText(Integer.toString(j - 5));
+						} else {
+							btn42[j].setBackground(Color.WHITE);
+							btn42[j].setText("");
+						}
+					}
+				}			
+			});
 			
-			while(full42 > 0) {
-				monthBody.add(new JLabel());
-				full42--;
-			}
-		} else if(firstDayOfWeek.equals(DayOfWeek.MONDAY)) {
-			int full42 = 42;
-			for(int i = 0; i < 1; i++) {
-				monthBody.add(new JLabel());
-				full42--;
-			}
-			for(int i = 1; i <= monthDays; i++) {
-				//JButton emptyButton = new JButton();				
-				String dayNumber = Integer.toString(i);
-				JButton newBtn = new JButton(dayNumber);
-				final Integer innerI = i;
-				if(innerI == dDays[0].getDayOfMonth()) {
+			btn42[i].addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
 					// TODO Auto-generated method stub
-					newBtn.setBackground(Color.GRAY);
-				} else {
-					newBtn.setBackground(Color.WHITE);					
+					final LocalDate[] dDays = {model.getDDay()};
+					if(btn42[j].getText() != "") {
+						LocalDate setDay = LocalDate.of(dDays[0].getYear(), dDays[0].getMonth(), Integer.parseInt(btn42[j].getText()));
+						model.setDDay(setDay);
+
+					}
 				}
-				model.addChangeListener(new ChangeListener() {
-					@Override
-					public void stateChanged(ChangeEvent e) {
-						// TODO Auto-generated method stub
-						if(innerI == dDays[0].getDayOfMonth()) {
-							// TODO Auto-generated method stub
-							newBtn.setBackground(Color.GRAY);
-						} else {
-							newBtn.setBackground(Color.WHITE);					
-						}
-					}					
-				});
-				monthBody.add(newBtn);
-				full42--;
-			}
-			
-			while(full42 > 0) {
-				monthBody.add(new JLabel());
-				full42--;
-			}
-		} else if(firstDayOfWeek.equals(DayOfWeek.TUESDAY)) {
-			int full42 = 42;
-			for(int i = 0; i < 2; i++) {
-				monthBody.add(new JLabel());
-				full42--;
-			}
-			for(int i = 1; i <= monthDays; i++) {
-				//JButton emptyButton = new JButton();				
-				String dayNumber = Integer.toString(i);
-				JButton newBtn = new JButton(dayNumber);
-				final Integer innerI = i;
-				if(innerI == dDays[0].getDayOfMonth()) {
-					// TODO Auto-generated method stub
-					newBtn.setBackground(Color.GRAY);
-				} else {
-					newBtn.setBackground(Color.WHITE);					
-				}
-				model.addChangeListener(new ChangeListener() {
-					@Override
-					public void stateChanged(ChangeEvent e) {
-						// TODO Auto-generated method stub
-						if(innerI == dDays[0].getDayOfMonth()) {
-							// TODO Auto-generated method stub
-							newBtn.setBackground(Color.GRAY);
-						} else {
-							newBtn.setBackground(Color.WHITE);					
-						}
-					}					
-				});
-				monthBody.add(newBtn);
-				full42--;
-			}
-			while(full42 > 0) {
-				monthBody.add(new JLabel());
-				full42--;
-			}
-		} else if(firstDayOfWeek.equals(DayOfWeek.WEDNESDAY)) {
-			int full42 = 42;
-			for(int i = 0; i < 3; i++) {
-				monthBody.add(new JLabel());
-				full42--;
-			}
-			for(int i = 1; i <= monthDays; i++) {
-				//JButton emptyButton = new JButton();				
-				String dayNumber = Integer.toString(i);
-				JButton newBtn = new JButton(dayNumber);
-				final Integer innerI = i;
-				if(innerI == dDays[0].getDayOfMonth()) {
-					// TODO Auto-generated method stub
-					newBtn.setBackground(Color.GRAY);
-				} else {
-					newBtn.setBackground(Color.WHITE);					
-				}
-				model.addChangeListener(new ChangeListener() {
-					@Override
-					public void stateChanged(ChangeEvent e) {
-						// TODO Auto-generated method stub
-						if(innerI == dDays[0].getDayOfMonth()) {
-							// TODO Auto-generated method stub
-							newBtn.setBackground(Color.GRAY);
-						} else {
-							newBtn.setBackground(Color.WHITE);					
-						}
-					}					
-				});
-				monthBody.add(newBtn);
-				full42--;
-			}
-			while(full42 > 0) {
-				monthBody.add(new JLabel());
-				full42--;
-			}
-		} else if(firstDayOfWeek.equals(DayOfWeek.THURSDAY)) {
-			int full42 = 42;
-			for(int i = 0; i < 4; i++) {
-				monthBody.add(new JLabel());
-				full42--;
-			}
-			for(int i = 1; i <= monthDays; i++) {
-				//JButton emptyButton = new JButton();				
-				String dayNumber = Integer.toString(i);
-				JButton newBtn = new JButton(dayNumber);
-				final Integer innerI = i;
-				if(innerI == dDays[0].getDayOfMonth()) {
-					// TODO Auto-generated method stub
-					newBtn.setBackground(Color.GRAY);
-				} else {
-					newBtn.setBackground(Color.WHITE);					
-				}
-				model.addChangeListener(new ChangeListener() {
-					@Override
-					public void stateChanged(ChangeEvent e) {
-						// TODO Auto-generated method stub
-						if(innerI == dDays[0].getDayOfMonth()) {
-							// TODO Auto-generated method stub
-							newBtn.setBackground(Color.GRAY);
-						} else {
-							newBtn.setBackground(Color.WHITE);					
-						}
-					}					
-				});
-				monthBody.add(newBtn);
-				full42--;
-			}
-			while(full42 > 0) {
-				monthBody.add(new JLabel());
-				full42--;
-			}
-		} else if(firstDayOfWeek.equals(DayOfWeek.FRIDAY)) {
-			int full42 = 42;
-			for(int i = 0; i < 5; i++) {
-				monthBody.add(new JLabel());
-				full42--;
-			}
-			for(int i = 1; i <= monthDays; i++) {
-				//JButton emptyButton = new JButton();				
-				String dayNumber = Integer.toString(i);
-				JButton newBtn = new JButton(dayNumber);
-				final Integer innerI = i;
-				if(innerI == dDays[0].getDayOfMonth()) {
-					// TODO Auto-generated method stub
-					newBtn.setBackground(Color.GRAY);
-				} else {
-					newBtn.setBackground(Color.WHITE);					
-				}
-				model.addChangeListener(new ChangeListener() {
-					@Override
-					public void stateChanged(ChangeEvent e) {
-						// TODO Auto-generated method stub
-						if(innerI == dDays[0].getDayOfMonth()) {
-							// TODO Auto-generated method stub
-							newBtn.setBackground(Color.GRAY);
-						} else {
-							newBtn.setBackground(Color.WHITE);					
-						}
-					}					
-				});
-				monthBody.add(newBtn);
-				full42--;
-			}
-			while(full42 > 0) {
-				monthBody.add(new JLabel());
-				full42--;
-			}
-		} else { // Saturday
-			int full42 = 42;
-			for(int i = 0; i < 6; i++) {
-				monthBody.add(new JLabel());
-				full42--;
-			}
-			for(int i = 1; i <= monthDays; i++) {
-				//JButton emptyButton = new JButton();				
-				String dayNumber = Integer.toString(i);
-				JButton newBtn = new JButton(dayNumber);
-				final Integer innerI = i;
-				if(innerI == dDays[0].getDayOfMonth()) {
-					// TODO Auto-generated method stub
-					newBtn.setBackground(Color.GRAY);
-				} else {
-					newBtn.setBackground(Color.WHITE);					
-				}
-				model.addChangeListener(new ChangeListener() {
-					@Override
-					public void stateChanged(ChangeEvent e) {
-						// TODO Auto-generated method stub
-						if(innerI == dDays[0].getDayOfMonth()) {
-							// TODO Auto-generated method stub
-							newBtn.setBackground(Color.GRAY);
-						} else {
-							newBtn.setBackground(Color.WHITE);					
-						}
-					}					
-				});
-				monthBody.add(newBtn);
-				full42--;
-			}
-			while(full42 > 0) {
-				monthBody.add(new JLabel());
-				full42--;
-			}
+				
+			});
+			monthBody.add(btn42[i]);
 		}
+		
 		monthPanel.add(monthBody, BorderLayout.CENTER);
+		
 		
 		con.fill = GridBagConstraints.HORIZONTAL;
 		con.anchor = GridBagConstraints.NORTH;
@@ -585,7 +565,44 @@ public class SimpleCalendarTester {
 		con.gridy = 3;
 		frame.add(emptyPanel5, con);
 		
+		// Day View Panel
+		JPanel dayViewPanel = new JPanel();
+		dayViewPanel.setBackground(Color.WHITE);
+		dayViewPanel.setLayout(new FlowLayout());
+		JTextArea dayViewText = new JTextArea(20, 40);
+		dayViewText.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		dayViewText.setBackground(Color.WHITE);
 		
+		String dayEventStr = "";		
+		for(Event event : model.getDDayEvents(dDays[0])) {
+			dayEventStr += event.toString();
+			dayEventStr += "\n";
+		}		
+		dayViewText.setText(dayEventStr);
+
+		model.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				// TODO Auto-generated method stub
+				String dayEventStr = "";
+				final LocalDate[] dDays = {model.getDDay()};
+				
+				for(Event event : model.getDDayEvents(dDays[0])) {
+					dayEventStr += event.toString();
+					dayEventStr += "\n";
+				}
+				
+				dayViewText.setText(dayEventStr);
+			}			
+		});
+		
+		con.gridx = 2;
+		con.gridwidth = 2;
+		con.gridy = 3;
+		dayViewPanel.add(dayViewText);
+		frame.add(dayViewPanel, con);
+
+		/*
 		// Day View Time
 		JPanel dayTimePanel = new JPanel();
 		dayTimePanel.setBackground(Color.WHITE);
@@ -639,6 +656,8 @@ public class SimpleCalendarTester {
 		con.gridx = 3;
 		con.gridy = 3;
 		frame.add(dayView, con);
+		*/
+		
 		
 		// Closing frame
 		frame.pack();
