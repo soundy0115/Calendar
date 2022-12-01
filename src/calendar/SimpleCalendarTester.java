@@ -3,7 +3,9 @@ package calendar;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -29,7 +31,6 @@ import javax.swing.event.ChangeListener;
 
 public class SimpleCalendarTester {
 	public static void main(String[] args) throws IOException {
-		// TODO Auto-generated method stub
 		
 		CalendarModel model = new CalendarModel();
 		
@@ -44,15 +45,10 @@ public class SimpleCalendarTester {
 		model.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				// TODO Auto-generated method stub
 				dDays[0] = model.getDDay();
-
 			}
 			
 		});
-		
-
-
 		
 		// Main Frame GridBagLayout
 		JFrame frame = new JFrame();
@@ -74,7 +70,6 @@ public class SimpleCalendarTester {
 		minusBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				model.moveDDay(-1);
 			}
 		});
@@ -82,7 +77,6 @@ public class SimpleCalendarTester {
 		plusBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				model.moveDDay(1);
 			}			
 		});
@@ -134,7 +128,6 @@ public class SimpleCalendarTester {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				try {
 					model.getCalendar().writeFile();
 				} catch (IOException e1) {
@@ -161,6 +154,8 @@ public class SimpleCalendarTester {
 		con.gridx = 0;
 		con.gridy = 1;
 		frame.add(emptyLine, con);
+		
+	
 		
 		
 		// CREATE Frame
@@ -207,8 +202,38 @@ public class SimpleCalendarTester {
 				LocalTime edTime = LocalTime.of(endTimeHour, endTimeMin);
 				
 				Event newEventInfo = new Event(name, date, stTime, edTime);
-				model.getCalendar().add(newEventInfo);
-				createFrame.setVisible(false);
+				
+				
+				boolean successAdd = model.getCalendar().add(newEventInfo); 
+				if(successAdd) {
+					createFrame.setVisible(false);
+				} else {
+					// Create Error
+					JFrame errorFrame = new JFrame();
+					
+					
+					JPanel errorPanel = new JPanel();
+					errorPanel.setLayout(new BorderLayout());
+					errorPanel.setBackground(Color.red);
+					JLabel errorLabel = new JLabel("Time Conflict Error", SwingConstants.CENTER);
+					
+					errorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+					errorLabel.setBackground(Color.red);
+					errorLabel.setForeground(Color.black);
+					errorLabel.setPreferredSize(new Dimension(250, 100));
+					errorLabel.setFont(new Font("Verdana", Font.BOLD, 20));
+					
+					
+					errorPanel.add(errorLabel, BorderLayout.CENTER);
+					errorFrame.add(errorPanel);
+					errorFrame.pack();
+					errorFrame.setTitle("Error");
+					errorFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					errorFrame.setVisible(true);
+					
+					
+				}
+
 			}
 			
 		});
@@ -219,6 +244,13 @@ public class SimpleCalendarTester {
 		createFrame.add(createMainPanel);
 		createFrame.pack();
 		createFrame.setVisible(false);
+		
+		
+		
+		
+		
+		
+
 		
 		// Full View Create Button
 		JPanel createBtnPanel = new JPanel();
@@ -254,18 +286,7 @@ public class SimpleCalendarTester {
 		con.gridx = 1;
 		con.gridy = 2;
 		frame.add(emptyPanel3, con);
-		
-		// Empty Panel
-		/*
-		JPanel emptyPanel4 = new JPanel();
-		emptyPanel4.setBackground(Color.WHITE);
-		emptyPanel4.add(new JLabel(" "));
-		con.fill = GridBagConstraints.HORIZONTAL;
-		con.weightx = 0.5;
-		con.gridx = 2;
-		con.gridy = 2;
-		frame.add(emptyPanel4, con);
-		*/
+
 		
 		// Day info
 		JPanel dayInfoPanel = new JPanel();
@@ -572,6 +593,7 @@ public class SimpleCalendarTester {
 		JTextArea dayViewText = new JTextArea(20, 40);
 		dayViewText.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		dayViewText.setBackground(Color.WHITE);
+		dayViewText.setFont(new Font("Verdana", Font.BOLD, 12));
 		
 		String dayEventStr = "";		
 		for(Event event : model.getDDayEvents(dDays[0])) {
@@ -602,61 +624,6 @@ public class SimpleCalendarTester {
 		dayViewPanel.add(dayViewText);
 		frame.add(dayViewPanel, con);
 
-		/*
-		// Day View Time
-		JPanel dayTimePanel = new JPanel();
-		dayTimePanel.setBackground(Color.WHITE);
-		dayTimePanel.setLayout(new GridLayout(0, 1));
-		for(int i = 5; i <= 12; i++) {
-			
-			if(i == 12) {
-				JLabel timeLabel = new JLabel(Integer.toString(i) + "PM ", SwingConstants.RIGHT);
-				timeLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-				dayTimePanel.add(timeLabel);
-
-			} else {
-				JLabel timeLabel = new JLabel(Integer.toString(i) + "AM ", SwingConstants.RIGHT);
-				timeLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-				dayTimePanel.add(timeLabel);
-			}
-			JLabel emptyLabel = new JLabel("              ");
-			emptyLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-			dayTimePanel.add(emptyLabel);
-		}
-		
-		for(int i = 1; i <= 12; i++) {
-			JLabel timeLabel = new JLabel(Integer.toString(i) + "PM ", SwingConstants.RIGHT);
-			timeLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
-			dayTimePanel.add(timeLabel);
-			JLabel emptyLabel = new JLabel("              ");
-			emptyLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-			dayTimePanel.add(emptyLabel);
-		}
-		
-		con.fill = GridBagConstraints.HORIZONTAL;
-		con.weightx = 0.5;
-		con.gridx = 2;
-		con.gridy = 3;
-		frame.add(dayTimePanel, con);
-		
-		
-		// Day View Main
-		
-		JPanel dayView = new JPanel();
-		dayView.setLayout(new GridLayout(0, 1));
-		for(int i = 0; i < 40; i++) {
-			JLabel timeInfo = new JLabel("                                                                 ");
-			timeInfo.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-			dayView.add(timeInfo);
-		}
-		con.fill = GridBagConstraints.HORIZONTAL;
-		con.weightx = 0.5;
-		con.ipadx = 500;
-		con.gridx = 3;
-		con.gridy = 3;
-		frame.add(dayView, con);
-		*/
 		
 		
 		// Closing frame
